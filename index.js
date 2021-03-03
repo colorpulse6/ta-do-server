@@ -10,7 +10,7 @@ const typeDefs = gql`
   }
 
   type Category {
-    name: String
+    name: String!
     color: String
     todos: [Todo]
   }
@@ -23,6 +23,7 @@ const typeDefs = gql`
   }
   type Mutation {
     addCategory(name: String, color: String): Category
+    addTodo(title: String, category: String, complete: Boolean): Todo
   }
   schema {
     query: Query
@@ -46,9 +47,15 @@ const categories = [
   },
 ];
 
-function save({ name, color }) {
+function saveCategory({ name, color }) {
   let item = { name, color };
   categories.unshift(item);
+  return item;
+}
+
+function saveTodo({ title, category, complete }) {
+  let item = { title, category, complete };
+  todos.unshift(item);
   return item;
 }
 
@@ -59,7 +66,10 @@ const resolvers = {
   },
   Mutation: {
     async addCategory(_, { name, color }) {
-      return await save({ name, color });
+      return await saveCategory({ name, color });
+    },
+    async addTodo(_, { title, category, complete }) {
+      return await saveTodo({ title, category, complete });
     },
   },
 };
